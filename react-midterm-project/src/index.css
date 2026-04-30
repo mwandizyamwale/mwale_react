@@ -1,0 +1,220 @@
+
+
+:root {
+  --bg-gradient: linear-gradient(135deg,#00a1b7,#d3a8ff);
+  --glass: rgba(60, 60, 60, 0.15);
+  --glass-strong: rgba(255, 255, 255, 0.59);
+  --border-glass: rgba(255,255,255,0.35);
+  --text-main: #ffffff;
+  --accent: #2563eb;
+  --accent2: #14b8a6;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --color-text-muted: rgba(255,255,255,0.72);
+}
+
+
+body.light {
+  --bg-gradient: linear-gradient(135deg,#598ede,#0c3678);
+  --glass: rgba(255,255,255,0.75);
+  --glass-strong: rgba(255,255,255,0.9);
+  --border-glass: rgba(0,0,0,0.15);
+  --text-main: #222;
+  --color-text-muted: #555;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-main);
+}
+
+
+.navbar{
+  backdrop-filter: blur(1000px);
+  background: var(--glass);
+  border-bottom:1px solid var(--border-glass);
+  padding:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.nav-brand{
+  font-weight:700;
+  font-size:18px;
+  color:rgb(255, 255, 255);
+  text-decoration:none;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.nav-links{display:flex;gap:10px}
+
+.nav-link{
+  text-decoration:none;
+  padding:6px 14px;
+  border-radius:20px;
+  color:rgb(255, 255, 255);
+  opacity:.7;
+  transition:.3s;
+}
+.nav-link:hover{opacity:1;background:rgba(255, 255, 255, 0.795)}
+.nav-link.active{background:rgb(235, 235, 235);color:#333;opacity:1}
+
+
+
+.page{
+  max-width:950px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+
+
+.home-hero{
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border-glass);
+  border-radius:20px;
+  padding:50px 30px;
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.hero-title{font-size:34px;font-weight:700;margin-bottom:10px}
+.hero-sub{opacity:.85;margin-bottom:25px}
+
+
+
+.btn{
+  border: 1px solid transparent;
+  padding:10px 20px;
+  border-radius:30px;
+  cursor:pointer;
+  font-weight:600;
+  transition: 0.2s;
+}
+
+.btn-primary{
+  background:linear-gradient(45deg,var(--accent),var(--accent2));
+  color:white;
+}
+.btn-primary:hover{transform:scale(1.05)}
+
+.btn-danger{
+  background:var(--danger);
+  color:rgb(211, 129, 129);
+}
+
+.btn-sm{padding:6px 14px;font-size:13px}
+
+
+
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.stat-card{
+  background:var(--glass);
+  border:1px solid var(--border-glass);
+  backdrop-filter:blur(10px);
+  padding:20px;
+  border-radius:16px;
+  text-align:center;
+}
+
+.stat-num{font-size:30px;font-weight:700}
+.stat-label{opacity:.8}
+
+
+
+.progress-wrap{margin:20px 0}
+
+.progress-bar{
+  height:10px;
+  background:rgba(255,255,255,.2);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,#48dbbe,#0dc8fc);
+  transition:.5s;
+}
+
+
+.task-card{
+  background:var(--glass);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass);
+  padding:18px;
+  border-radius:16px;
+  margin-bottom:14px;
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.task-card:hover{transform:translateY(-3px)}
+
+.task-title{font-weight:600;font-size:15px}
+.task-desc{opacity:.75;font-size:13px;margin:5px 0}
+
+.task-meta{display:flex;gap:6px;flex-wrap:wrap}
+
+.task-due{font-size:12px;opacity:.8}
+
+
+
+.task-check{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid white;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-check.checked{
+  background:var(--success);
+  border:none;
+}
+
+
+
+.badge{
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:700;
+}
+
+.badge-pending{background:#fff3cd;color:#7a5d00}
+.badge-progress{background:#cce5ff;color:#004085}
+.badge-done{background:#d4edda;color:#155724}
+
+.badge-high{background:#ffcccc;color:#900}
+.badge-med{background:#ffe6b3;color:#8a5c00}
+.badge-low{background:#d4edda;color:#155724}
+
+
+
+.form-input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  margin-top:5px;
+}
+
+.form-label{
+  margin-top:15px;display:block
+}
+
+.empty{
+  text-align:center;
+  opacity:.8;
+  padding:40px;
+}
