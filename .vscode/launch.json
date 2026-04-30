@@ -1,0 +1,14 @@
+{
+    "configurations": [
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch reminder-backend",
+            "program": "${workspaceFolder}/reminder-backend/server.js",
+            "cwd": "${workspaceFolder}/reminder-backend",
+            "envFile": "${workspaceFolder}/reminder-backend/.env",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}       
