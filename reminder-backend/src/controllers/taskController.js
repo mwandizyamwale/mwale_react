@@ -1,4 +1,4 @@
-const { getPool, sql } = require('../config/db')
+const { getPool, sql } = require('../config/mysql')
 
 async function getTasks(req, res) {
   try {
