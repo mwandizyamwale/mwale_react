@@ -1,40 +1,38 @@
-const { getPool } = require('../config/mysql')
+const pool = require("../config/mysql");
 
 async function initDB() {
-  const pool = await getPool()
+  try {
+    console.log("Connecting to MySQL...");
 
-  await pool.request().query(`
-    IF NOT EXISTS (
-      SELECT * FROM sysobjects WHERE name='users' AND xtype='U'
-    )
-    CREATE TABLE users (
-      id INT IDENTITY(1,1) PRIMARY KEY,
-      username NVARCHAR(100)  NOT NULL,
-      email NVARCHAR(255)  NOT NULL UNIQUE,
-      password_hash NVARCHAR(255)  NOT NULL,
-      created_at DATETIME2  DEFAULT GETDATE()
-    )
-  `)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(100) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
-  await pool.request().query(`
-    IF NOT EXISTS (
-      SELECT * FROM sysobjects WHERE name='tasks' AND xtype='U'
-    )
-    CREATE TABLE tasks (
-      id INT IDENTITY(1,1) PRIMARY KEY,
-      user_id INT            NOT NULL,
-      title NVARCHAR(100) NOT NULL,
-      [desc] NVARCHAR(MAX) NOT NULL,
-      status NVARCHAR(20) NOT NULL DEFAULT 'pending',
-      priority NVARCHAR(10) NOT NULL DEFAULT 'med',
-      due DATE NOT NULL,
-      created_at DATETIME2  DEFAULT GETDATE(),
-      CONSTRAINT fk_tasks_user FOREIGN KEY (user_id)
-        REFERENCES users(id) ON DELETE CASCADE
-    )
-  `)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS tasks (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        title VARCHAR(100) NOT NULL,
+        description TEXT NOT NULL,
+        status VARCHAR(20) DEFAULT 'pending',
+        priority VARCHAR(10) DEFAULT 'med',
+        due_date DATE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `);
 
-  console.log('Database tables ready.')
+    console.log("Database ready ✅");
+  } catch (err) {
+    console.error("DB INIT ERROR:", err);
+    process.exit(1);
+  }
 }
 
-module.exports = initDB
+module.exports = initDB;
