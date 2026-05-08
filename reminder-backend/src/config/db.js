@@ -1,4 +1,4 @@
-const sql = require('mssql')
+const sql = require('mssql2')
 require('dotenv').config()
 
 const db = mysql.createconnection({
