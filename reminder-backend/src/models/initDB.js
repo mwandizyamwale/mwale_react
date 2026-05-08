@@ -1,4 +1,4 @@
-const { getPool } = require('../config/db')
+const { getPool } = require('../config/mysql')
 
 async function initDB() {
   const pool = await getPool()
