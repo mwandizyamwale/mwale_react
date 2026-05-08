@@ -1,93 +1,92 @@
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const { getPool, sql } = require('../config/mysql')
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const pool = require("../config/mysql");
 
 async function register(req, res) {
-  const { username, email, password } = req.body
+  const { username, email, password } = req.body;
 
   if (!username || !email || !password)
-    return res.status(400).json({ error: 'All fields are required.' })
+    return res.status(400).json({ error: "All fields are required." });
 
   if (username.trim().length < 2)
-    return res.status(400).json({ error: 'Username must be at least 2 characters.' })
+    return res.status(400).json({ error: "Username must be at least 2 characters." });
 
   if (password.length < 6)
-    return res.status(400).json({ error: 'Password must be at least 6 characters.' })
+    return res.status(400).json({ error: "Password must be at least 6 characters." });
 
   try {
-    const pool = await getPool()
+    // check existing email
+    const [existing] = await pool.query(
+      "SELECT id FROM users WHERE email = ?",
+      [email.toLowerCase()]
+    );
 
-    // Check if email already exists
-    const existing = await pool.request()
-      .input('email', sql.NVarChar, email.toLowerCase())
-      .query('SELECT id FROM users WHERE email = @email')
+    if (existing.length > 0)
+      return res.status(409).json({ error: "Email already registered." });
 
-    if (existing.recordset.length > 0)
-      return res.status(409).json({ error: 'Email already registered.' })
+    const password_hash = await bcrypt.hash(password, 12);
 
+    const [result] = await pool.query(
+      "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+      [username.trim(), email.toLowerCase(), password_hash]
+    );
 
-    const password_hash = await bcrypt.hash(password, 12)
+    const [userRows] = await pool.query(
+      "SELECT id, username, email, created_at FROM users WHERE id = ?",
+      [result.insertId]
+    );
 
-    const result = await pool.request()
-      .input('username',  sql.NVarChar, username.trim())
-      .input('email', sql.NVarChar, email.toLowerCase())
-      .input('password_hash', sql.NVarChar, password_hash)
-      .query(`
-        INSERT INTO users (username, email, password_hash)
-        OUTPUT INSERTED.id, INSERTED.username, INSERTED.email, INSERTED.created_at
-        VALUES (@username, @email, @password_hash)
-      `)
-
-    const user = result.recordset[0]
+    const user = userRows[0];
 
     const token = jwt.sign(
       { id: user.id, username: user.username, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    )
+      { expiresIn: "7d" }
+    );
 
-    res.status(201).json({ token, user })
+    res.status(201).json({ token, user });
+
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Server error during registration.' })
+    console.error(err);
+    res.status(500).json({ error: "Server error during registration." });
   }
 }
 
 async function login(req, res) {
-  const { email, password } = req.body
+  const { email, password } = req.body;
 
   if (!email || !password)
-    return res.status(400).json({ error: 'Email and password are required.' })
+    return res.status(400).json({ error: "Email and password are required." });
 
   try {
-    const pool = await getPool()
+    const [rows] = await pool.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email.toLowerCase()]
+    );
 
-    const result = await pool.request()
-      .input('email', sql.NVarChar, email.toLowerCase())
-      .query('SELECT * FROM users WHERE email = @email')
-
-    const user = result.recordset[0]
+    const user = rows[0];
     if (!user)
-      return res.status(401).json({ error: 'Invalid email or password.' })
+      return res.status(401).json({ error: "Invalid email or password." });
 
-    const match = await bcrypt.compare(password, user.password_hash)
+    const match = await bcrypt.compare(password, user.password_hash);
     if (!match)
-      return res.status(401).json({ error: 'Invalid email or password.' })
+      return res.status(401).json({ error: "Invalid email or password." });
 
     const token = jwt.sign(
       { id: user.id, username: user.username, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    )
+      { expiresIn: "7d" }
+    );
 
     res.json({
       token,
-      user: { id: user.id, username: user.username, email: user.email }
-    })
+      user: { id: user.id, username: user.username, email: user.email },
+    });
+
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Server error during login.' })
+    console.error(err);
+    res.status(500).json({ error: "Server error during login." });
   }
 }
 
-module.exports = { register, login }
+module.exports = { register, login };
